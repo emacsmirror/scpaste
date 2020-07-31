@@ -269,7 +269,9 @@ NAME is used for the file name."
             (insert (concat ";; * <" scpaste-http-destination "/" file ">\n"))))
         (emacs-lisp-mode)
         (if (fboundp 'font-lock-ensure)
-            (font-lock-ensure)
+            (progn (font-lock-mode nil)
+                   (font-lock-ensure)
+                   (jit-lock-mode t))
           (with-no-warnings ; fallback for Emacs 24
             (font-lock-fontify-buffer)))
         (rename-buffer "SCPaste")
