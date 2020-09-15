@@ -3,15 +3,16 @@
 This will place an HTML copy of a buffer on the web on a server to
 which the user has SSH access.
 
-It's similar in purpose to services such as [Gist](https://gist.github.com)
-or [Pastebin](https://pastebin.com), but it's much simpler since it 
+It's similar in purpose to services such as [Gist][1]
+or [Pastebin][2], but it's much simpler since it
 assumes the user has an account on a publicly-accessible HTTP
 server. It uses `scp` as its transport and uses Emacs' font-lock as
 its syntax highlighter instead of relying on a third-party syntax
 highlighter for which individual language support must be added
 one-by-one.
 
-Requires [htmlize](https://github.com/hniksic/emacs-htmlize) library.
+Uses the [htmlize][3] library if present; falls back to the built-in
+htmlfontify otherwise.
 
 ## Configuration
 
@@ -29,9 +30,9 @@ Optionally you can set the displayed name and where it should link to:
     (setq scpaste-user-name "Technomancy"
           scpaste-user-address "https://technomancy.us/")
 
-You probably want to set up SSH keys for your destination to avoid
-having to enter your password once for each paste. Also be sure the
-key of the host referenced in `scpaste-scp-destination` is in your
+You must set up SSH keys for your destination with [ssh-agent][4] to
+avoid having to enter your password once for each paste. Also be sure
+the key of the host referenced in `scpaste-scp-destination` is in your
 known hosts file--scpaste will not prompt you to add it but will
 simply hang.
 
@@ -55,3 +56,8 @@ pastes. If a paste's filename includes "private" it will be skipped.
 
 Copyright © 2008-2018 Phil Hagelberg and contributors.
 Distributed under the same terms as GNU Emacs.
+
+[1]: https://gist.github.com
+[2]: https://pastebin.com
+[3]: https://github.com/hniksic/emacs-htmlize
+[4]: https://linux.die.net/man/1/ssh-agent
