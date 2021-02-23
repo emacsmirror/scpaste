@@ -3,7 +3,7 @@
 ;; Copyright © 2008-2020 Phil Hagelberg and contributors
 
 ;; Author: Phil Hagelberg
-;; URL: https://github.com/technomancy/scpaste
+;; URL: https://git.sr.ht/~technomancy/scpaste
 ;; Version: 0.6.5
 ;; Created: 2008-04-02
 ;; Keywords: convenience hypermedia
