@@ -242,8 +242,16 @@ for the file name."
 NAME is used for the file name."
   (interactive (list (scpaste-read-name (format "-%s-%s" (region-beginning)
                                                 (region-end)))))
-  (let ((region-contents (buffer-substring (mark) (point))))
+  (let ((buffer-name (buffer-name))
+        (beg-line (line-number-at-pos (region-beginning)))
+        (end-line (line-number-at-pos (region-end)))
+        (region-contents (buffer-substring (mark) (point))))
     (with-temp-buffer
+      (rename-buffer (format "%s:%s"
+                             buffer-name
+                             (if (eq beg-line end-line)
+                                 beg-line
+                               (format "%s-%s" beg-line end-line))))
       (insert region-contents)
       (scpaste name))))
 
