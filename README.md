@@ -54,7 +54,7 @@ pastes. If a paste's filename includes "private" it will be skipped.
 
 ## Copyright
 
-Copyright © 2008-2018 Phil Hagelberg and contributors.
+Copyright © 2008-2022 Phil Hagelberg and contributors.
 Distributed under the same terms as GNU Emacs.
 
 [1]: https://gist.github.com
