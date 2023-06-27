@@ -1,6 +1,6 @@
 ;;; scpaste.el --- Paste to the web via scp.
 
-;; Copyright © 2008-2020 Phil Hagelberg and contributors
+;; Copyright © 2008-2023 Phil Hagelberg and contributors
 
 ;; Author: Phil Hagelberg
 ;; URL: https://git.sr.ht/~technomancy/scpaste
@@ -149,6 +149,9 @@ It's better to set this in ~/.ssh/config than to use this setting.")
                                                       (or load-file-name
                                                           (buffer-file-name))))
 
+(defvar scpaste-async (bound-and-true-p exwm-state)
+  "Upload pastes asynchronously when non-nil. Enabled by default in exwm.")
+
 (defun scpaste-footer ()
   "HTML message to place at the bottom of each file."
   (concat "<p style='font-size: 8pt; font-family: monospace; "
@@ -184,6 +187,32 @@ If non-nil, SUFFIX is inserted between name and extension."
   "Make a name from current timestamp and current buffer's extension."
   (concat (format-time-string "%s") (file-name-extension (buffer-name) t)))
 
+(defun scpaste-exit-handler (exit-code full-url tmp-file tmp-hfile error-buffer)
+  (delete-file tmp-file)
+  (delete-file tmp-hfile)
+  (if (= exit-code 0)
+      (message "Pasted to %s (on kill ring)" full-url)
+    (pop-to-buffer error-buffer)
+    (help-mode-setup)))
+
+(defun scpaste-upload (command tmp-file tmp-hfile full-url)
+  (let* ((error-buffer "*scp-error*")
+         (exit-code (shell-command (mapconcat 'identity command " ")
+                                   nil error-buffer)))
+    (kill-new full-url)
+    (scpaste-exit-handler exit-code full-url tmp-file tmp-hfile error-buffer)))
+
+(defun scpaste-sentinel (tmp-file tmp-hfile full-url process _change)
+  (when (eq 'exit (process-status process))
+    (scpaste-exit-handler (process-exit-status process) full-url
+                          tmp-file tmp-hfile (process-buffer process))))
+
+(defun scpaste-upload-async (command tmp-file tmp-hfile full-url)
+  (kill-new full-url)
+  (set-process-sentinel (apply 'start-process "scpaste" "*scpaste*" command)
+                        (apply-partially 'scpaste-sentinel
+                                         tmp-file tmp-hfile full-url)))
+
 ;;;###autoload
 (defun scpaste (original-name)
   "Paste the current buffer via `scp' to `scpaste-http-destination'.
@@ -217,24 +246,14 @@ for the file name."
       (write-file tmp-hfile)
       (kill-buffer hb))
 
-    (let* ((identity (if scpaste-scp-pubkey
-                         (concat "-i " scpaste-scp-pubkey) ""))
-           (port (if scpaste-scp-port (concat "-P " scpaste-scp-port)))
-           (invocation (concat scpaste-scp " -q " identity " " port))
-           (command (concat invocation " " tmp-file " " tmp-hfile " "
-                            scpaste-scp-destination "/"))
-           (error-buffer "*scp-error*")
-           (retval (shell-command command nil error-buffer))
+    (let* ((identity (and scpaste-scp-pubkey (list "-i" scpaste-scp-pubkey)))
+           (port (and scpaste-scp-port (list "-P" scpaste-scp-port)))
+           (command `(,scpaste-scp "-q" ,@identity ,@port ,tmp-file ,tmp-hfile
+                                   ,(concat scpaste-scp-destination "/")))
            (select-enable-primary t))
-
-      (delete-file tmp-file)
-      (delete-file tmp-hfile)
-      ;; Notify user and put the URL on the kill ring
-      (if (= retval 0)
-          (progn (kill-new full-url)
-                 (message "Pasted to %s (on kill ring)" full-url))
-        (pop-to-buffer error-buffer)
-        (help-mode-setup)))))
+      (if scpaste-async
+          (scpaste-upload-async command tmp-file tmp-hfile full-url)
+        (scpaste-upload command tmp-file tmp-hfile full-url)))))
 
 ;;;###autoload
 (defun scpaste-region (name)

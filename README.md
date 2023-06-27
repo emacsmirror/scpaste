@@ -36,6 +36,11 @@ the key of the host referenced in `scpaste-scp-destination` is in your
 known hosts file--scpaste will not prompt you to add it but will
 simply hang.
 
+You can set `scpaste-async` to upload asynchronously. When this is
+set, the URL will be put on the kill ring before the upload completes,
+so there is a chance it will fail, but an error buffer will be
+displayed in this case. This defaults to true when EXWM is active.
+
 ## Usage
 
 `M-x scpaste`, (or `scpaste-region`) enter a name, and press
@@ -54,7 +59,7 @@ pastes. If a paste's filename includes "private" it will be skipped.
 
 ## Copyright
 
-Copyright © 2008-2022 Phil Hagelberg and contributors.
+Copyright © 2008-2023 Phil Hagelberg and contributors.
 Distributed under the same terms as GNU Emacs.
 
 [1]: https://gist.github.com
