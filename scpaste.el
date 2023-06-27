@@ -4,7 +4,7 @@
 
 ;; Author: Phil Hagelberg
 ;; URL: https://git.sr.ht/~technomancy/scpaste
-;; Version: 0.6.5
+;; Version: 0.7.0
 ;; Created: 2008-04-02
 ;; Keywords: convenience hypermedia
 ;; EmacsWiki: SCPaste
@@ -57,6 +57,8 @@
 
 ;; (setq scpaste-user-name "Technomancy"
 ;;       scpaste-user-address "https://technomancy.us/")
+
+;; You can set `scpaste-async' to non-nil to run the upload in the background.
 
 ;;; Usage
 
