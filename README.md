@@ -4,7 +4,7 @@ This will place an HTML copy of a buffer on the web on a server to
 which the user has SSH access.
 
 It's similar in purpose to services such as [Gist][1]
-or [Pastebin][2], but it's much simpler since it
+or [dpaste][2], but it's much simpler since it
 assumes the user has an account on a publicly-accessible HTTP
 server. It uses `scp` as its transport and uses Emacs' font-lock as
 its syntax highlighter instead of relying on a third-party syntax
@@ -60,9 +60,9 @@ pastes. If a paste's filename includes "private" it will be skipped.
 ## Copyright
 
 Copyright © 2008-2023 Phil Hagelberg and contributors.
-Distributed under the same terms as GNU Emacs.
+Distributed under the same terms as GNU Emacs; see the file LICENSE.
 
 [1]: https://gist.github.com
-[2]: https://pastebin.com
+[2]: https://dpaste.org/
 [3]: https://github.com/hniksic/emacs-htmlize
 [4]: https://linux.die.net/man/1/ssh-agent
