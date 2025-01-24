@@ -282,8 +282,8 @@ NAME is used for the file name."
   (interactive)
   (let* ((dest-parts (split-string scpaste-scp-destination ":"))
          (files (shell-command-to-string (concat scpaste-ssh " "
-                                                 (car dest-parts) " ls "
-                                                 (cadr dest-parts))))
+                                                 (car dest-parts) " 'ls "
+                                                 (cadr dest-parts) "'")))
          (file-list (split-string files "\n")))
     (save-excursion
       (with-temp-buffer
